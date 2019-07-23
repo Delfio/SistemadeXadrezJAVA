@@ -1,6 +1,8 @@
 package chess;
 
-public class ChessExceptions extends RuntimeException{
+import bordgame.BoardExceptions;
+
+public class ChessExceptions extends BoardExceptions{
 
 	/**
 	 * 

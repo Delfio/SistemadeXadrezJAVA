@@ -1,6 +1,8 @@
 package chess;
 
 import bordgame.Board;
+import bordgame.Pieces;
+import bordgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
@@ -25,13 +27,44 @@ public class ChassMatch {
 		return mat;
 	}
 	
-	private void placeNewPice(char column, int row, ChessPiece piece) {
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+		Position source = sourcePosition.toPosition();
+		Position target = targetPosition.toPosition();
+		validateSourcePosition(source);
+		Pieces capturedPiece = makeMove(source, target);
+		return (ChessPiece) capturedPiece;
+	}
+	
+	private void validateSourcePosition(Position position) {
+		if(!board.thereIsApiece(position)) {
+			throw new ChessExceptions("There is no piece on source position");
+		}
+	}
+	
+	private Pieces makeMove (Position source, Position target) {
+		Pieces p = board.removePiece(source);
+		Pieces capturePiece = board.removePiece(target);
+		board.placePiece(p, target);
+		return capturePiece;
+	}
+	
+	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
 	}
 	
 	private void initialSetup() {
-		placeNewPice('b', 6, new Rook(board, Color.WHITE));
-		placeNewPice('e', 8, new King(board, Color.BLACK));
-		placeNewPice('e', 1, new King(board, Color.WHITE));
+		placeNewPiece('c', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('c', 2, new Rook(board, Color.WHITE));
+        placeNewPiece('d', 2, new Rook(board, Color.WHITE));
+        placeNewPiece('e', 2, new Rook(board, Color.WHITE));
+        placeNewPiece('e', 1, new Rook(board, Color.WHITE));
+        placeNewPiece('d', 1, new King(board, Color.WHITE));
+
+        placeNewPiece('c', 7, new Rook(board, Color.BLACK));
+        placeNewPiece('c', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('d', 7, new Rook(board, Color.BLACK));
+        placeNewPiece('e', 7, new Rook(board, Color.BLACK));
+        placeNewPiece('e', 8, new Rook(board, Color.BLACK));
+        placeNewPiece('d', 8, new King(board, Color.BLACK));
 	}
 }
