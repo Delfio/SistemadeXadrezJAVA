@@ -1,6 +1,7 @@
 package chess.pieces;
 
 import bordgame.Board;
+import bordgame.Pieces;
 import bordgame.Position;
 import chess.ChessPiece;
 import chess.Color;
@@ -77,6 +78,12 @@ public class King extends ChessPiece{
 		}
 		
 		return mat;
+	}
+
+	@Override
+	public void add(Pieces capturedPiece) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
