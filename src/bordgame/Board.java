@@ -40,7 +40,7 @@ public class Board {
 	}
 	
 	public void placePiece(Pieces piece, Position position) {
-		if(thereIsApiece(position)) {
+		if(thereIsAPiece(position)) {
 			throw new BoardExceptions("There is already a pice on position " + position);
 		}
 		pieces[position.getRow()][position.getColumn()] = piece;
@@ -69,7 +69,7 @@ public class Board {
 		return positionExists(position.getRow(), position.getColumn());
 	}
 	
-	public boolean thereIsApiece(Position position) {
+	public boolean thereIsAPiece(Position position) {
 		if(!positionExists(position)) {
 			throw new BoardExceptions("Position not on the board");
 		}
