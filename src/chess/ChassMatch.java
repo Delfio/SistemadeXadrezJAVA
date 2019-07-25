@@ -2,6 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import bordgame.Board;
 import bordgame.Pieces;
@@ -15,6 +17,7 @@ public class ChassMatch {
 	private int turn;
 	private Color currentPlayer;
 	private Board board;
+	private boolean check;
 	
 	private List<Pieces> piecesOnTheBoard = new ArrayList<Pieces>();
 	private List<ChessPiece> capturedPieces = new ArrayList<ChessPiece>();
@@ -22,6 +25,7 @@ public class ChassMatch {
 	public ChassMatch() {
 		board = new Board(8, 8);
 		turn = 1;
+		check = false;
 		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
@@ -73,6 +77,20 @@ public class ChassMatch {
 		return capturedPiece;
 	}
 	
+	//Logica desfazer movimento - Ao contrario do makeMove()
+	private void undoMove(Position source, Position target, Pieces capturedPiece) {
+		Pieces p = board.removePiece(target);// Tirar a peça que foi pro destino
+		board.placePiece(p, source);// Devolver peça para a posicao de origem
+		
+		//Devolver uma peça capturada para a posicao de destino -- vai q...
+		if (capturedPiece != null) {// verificando foi caputrado algo
+			board.placePiece(capturedPiece, target);//devolvendo
+			capturedPieces.remove(capturedPiece);//tirando peça da lista de captura
+			piecesOnTheBoard.add(capturedPiece); // Devolvendo a peça para o tabuleiro
+			//Jogada refeita !!
+		}
+	}
+	
 	private void validateSourcePosition(Position position) {
 		if (!board.thereIsAPiece(position)) {
 			throw new ChessExceptions("There is no piece on source position");
@@ -95,6 +113,20 @@ public class ChassMatch {
 	private void nextTurn() {
 		turn++;
 		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+	}
+	
+	private Color opponent(Color color) {
+		return (color == Color.WHITE)? Color.BLACK : Color.WHITE;
+	}
+	
+	private ChessPiece king(Color color) {
+		List<Pieces> list = (List<Pieces>) piecesOnTheBoard.stream().filter(x ->((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+		for (Pieces pieces : list) {
+			if(pieces instanceof King) {
+				return (ChessPiece) pieces;
+			}
+		}
+		throw new IllegalStateException("There is no " + color + " king on the board");
 	}
 	
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
